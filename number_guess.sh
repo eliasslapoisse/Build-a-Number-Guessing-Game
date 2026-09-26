@@ -19,3 +19,18 @@ else
 
 	echo -e "\nWelcome back, $USERNAME! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
 fi
+
+MAIN_FUNC() {
+	NUMBER_TO_GUESS=$(( RANDOM % 1000 + 1 ))
+
+	until [[ $GUESS -eq $NUMBER_TO_GUESS ]]
+	do
+		echo -e "\nGuess the secret number between 1 and 1000:"
+		read GUESS
+
+		if [[ ! $GUESS =~ ^[[0-9]]+$ ]]
+		then
+
+		fi			
+	done
+}
