@@ -20,17 +20,32 @@ else
 	echo -e "\nWelcome back, $USERNAME! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
 fi
 
-MAIN_FUNC() {
-	NUMBER_TO_GUESS=$(( RANDOM % 1000 + 1 ))
+NUMBER_TO_GUESS=$(( RANDOM % 1000 + 1 ))
+COUNT=0
+GUESS=""
 
-	until [[ $GUESS -eq $NUMBER_TO_GUESS ]]
-	do
-		echo -e "\nGuess the secret number between 1 and 1000:"
-		read GUESS
+until [[ $GUESS =~ ^[0-9]+$ && $GUESS -eq $NUMBER_TO_GUESS ]]
+do
+	echo -e "\nGuess the secret number between 1 and 1000:"
+	read GUESS
 
-		if [[ ! $GUESS =~ ^[[0-9]]+$ ]]
+	if [[ ! $GUESS =~ ^[0-9]+$ ]]
+	then
+		echo "That is not an integer, guess again:"
+		continue
+	fi
+
+	((COUNT++))
+
+		if [[ $GUESS -lt $NUMBER_TO_GUESS ]]
 		then
+			echo "It's higher than that, guess again:"
+		elif [[ $GUESS -gt $NUMBER_TO_GUESS ]]
+		then
+			echo "It's lower than that, guess again:"
+		fi
+done
 
-		fi			
-	done
-}
+INSERT_GAME=$($PSQL "INSERT INTO games(number_of_guesses, user_id) VALUES ($COUNT, $USER_ID);")
+
+echo -e "\nYou guessed it in $COUNT tries. The secret number was $NUMBER_TO_GUESS. Nice job!"
